@@ -52,17 +52,19 @@
 
 body {
   margin: 0;
+  background-color: #000;
+  /* 모니터가 1024x600보다 커도 정중앙에 대시보드가 오도록 배치 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
+  width: 1024px;
+  height: 600px;
   margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
   box-sizing: border-box;
 }
 
