@@ -161,7 +161,7 @@ function App() {
         </div>
       </div>
 
-      {/* --- RIGHT --- */}
+      {/* --- RIGHT AREA --- */}
       <div style={{ gridColumn: '3', gridRow: '1 / 6', display: 'grid', gridTemplateRows: '5fr 5fr' }}>
         <div style={{ ...boxStyle, borderBottom: 'none', padding: '15px' }}>
           <span style={labelStyle}>BRAKE PRESS</span>
@@ -174,27 +174,54 @@ function App() {
               <path d="M50 0 L100 45 L75 45 L75 98 L25 98 L25 45 L0 45 Z" fill={getBrakeColor(data.brake_f)} />
               <rect x="25" y="102" width="50" height="98" fill={getBrakeColor(data.brake_r)} />
             </svg>
+            <div style={{ position: 'absolute', top: '22%', left: '50%', transform: 'translateX(-50%)', color: 'white', fontWeight: 'bold', fontSize: '24px', pointerEvents: 'none' }}>F</div>
+            <div style={{ position: 'absolute', top: '72%', left: '50%', transform: 'translateX(-50%)', color: 'white', fontWeight: 'bold', fontSize: '24px', pointerEvents: 'none' }}>R</div>
           </div>
         </div>
+
         <div style={{ ...boxStyle, display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr', gridTemplateRows: '1fr 1fr', padding: '15px' }}>
           <span style={labelStyle}>TORQUE (Nm)</span>
-          {[
-            { v: data.t_fl, r: 1, c: 1 }, { v: data.t_fr, r: 1, c: 3 },
-            { v: data.t_rl, r: 2, c: 1 }, { v: data.t_rr, r: 2, c: 3 }
+          {[ 
+            { v: data.t_fl, r: 1, c: 1 }, { v: data.t_fr, r: 1, c: 3 }, 
+            { v: data.t_rl, r: 2, c: 1 }, { v: data.t_rr, r: 2, c: 3 } 
           ].map((t, i) => {
-            const max = 1000; const min = -400; const range = max - min;
+            const max = 1000; const min = -400; 
+            const range = max - min;
             const zeroPos = (max / range) * 100;
             const barHeight = (Math.abs(t.v) / range) * 100;
             const barTop = t.v >= 0 ? zeroPos - barHeight : zeroPos;
+
             return (
-              <div key={i} style={{ gridRow: t.r, gridColumn: t.c, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ width: '35px', height: '80px', background: '#111', border: '1px solid #444', position: 'relative' }}>
-                  <div style={{ width: '100%', height: `${barHeight}%`, background: getTorqueColor(t.v), position: 'absolute', top: `${barTop}%`, transition: 'all 0.05s linear' }} />
+              <div key={i} style={{ gridRow: t.r, gridColumn: t.c, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '80px', opacity: 0.3 }}>
+                    <div style={{ width: '4px', borderTop: '1px solid #fff' }} />
+                    <div style={{ width: '6px', borderTop: '2px solid #fff' }} /> 
+                    <div style={{ width: '4px', borderTop: '1px solid #fff' }} />
+                  </div>
+                  <div style={{ width: '35px', height: '80px', background: '#111', border: '1px solid #444', position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: `${zeroPos}%`, width: '100%', height: '1px', background: '#555', zIndex: 2 }} />
+                    <div style={{ 
+                      width: '100%', 
+                      height: `${barHeight}%`, 
+                      background: getTorqueColor(t.v), 
+                      position: 'absolute', 
+                      top: `${barTop}%`,
+                      transition: 'all 0.05s linear'
+                    }} />
+                  </div>
                 </div>
-                <div style={{ fontSize: '14px', marginTop: '6px', color: getTorqueColor(t.v) }}>{t.v}</div>
+                <div style={{ fontSize: '14px', marginTop: '6px', fontWeight: 'bold', color: getTorqueColor(t.v) }}>{t.v}</div>
               </div>
             );
           })}
+          <div style={{ gridColumn: '2', gridRow: '1 / 3', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <svg viewBox="0 0 100 160" style={{ height: '85%', opacity: 0.7 }}>
+              <rect x="25" y="20" width="50" height="120" rx="12" fill="none" stroke="#fff" strokeWidth="2" />
+              <circle cx="50" cy="50" r="10" fill="none" stroke="#fff" strokeWidth="2" />
+              <line x1="25" y1="80" x2="75" y2="80" stroke="#333" strokeWidth="1" />
+            </svg>
+          </div>
         </div>
       </div>
     </div>
