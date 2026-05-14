@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 const getSocColor = (val) => {
-  if (val >= 75) return '#009dff'; 
-  if (val >= 50) return '#00ff59'; 
-  if (val >= 25) return '#FFD600'; 
-  return '#FF0000'; 
+  if (val >= 75) return '#009dff';
+  if (val >= 50) return '#00ff59';
+  if (val >= 25) return '#FFD600';
+  return '#FF0000';
 };
 
 const getTempColor = (val) => {
@@ -89,8 +89,8 @@ function App() {
 
   return (
     <div style={{
-      backgroundColor: '#000', color: '#fff', 
-      width: '1024px', height: '600px', 
+      backgroundColor: '#000', color: '#fff',
+      width: '1024px', height: '600px',
       display: 'grid', gridTemplateColumns: '2.8fr 4.4fr 2.8fr', gridTemplateRows: 'repeat(5, 1fr)',
       fontFamily: 'Orbitron, sans-serif', padding: '6px', boxSizing: 'border-box'
     }}>
@@ -138,11 +138,11 @@ function App() {
             <line x1="0" y1="-2.7" x2="0" y2="2.7" stroke="#666" strokeWidth="0.05" />
             
             {/* G-FORCE 실시간 점 연동 */}
-            <circle 
-              cx={Number(data.accel_x)} 
-              cy={Number(data.accel_y)} 
-              r="0.15" 
-              fill="#CCFF00" 
+            <circle
+              cx={Number(data.accel_x)}
+              cy={Number(data.accel_y)}
+              r="0.15"
+              fill="#CCFF00"
               style={{ transition: 'all 0.05s linear' }}
             />
           </svg>
@@ -178,9 +178,9 @@ function App() {
         </div>
         <div style={{ ...boxStyle, display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr', gridTemplateRows: '1fr 1fr', padding: '15px' }}>
           <span style={labelStyle}>TORQUE (Nm)</span>
-          {[ 
-            { v: data.t_fl, r: 1, c: 1 }, { v: data.t_fr, r: 1, c: 3 }, 
-            { v: data.t_rl, r: 2, c: 1 }, { v: data.t_rr, r: 2, c: 3 } 
+          {[
+            { v: data.t_fl, r: 1, c: 1 }, { v: data.t_fr, r: 1, c: 3 },
+            { v: data.t_rl, r: 2, c: 1 }, { v: data.t_rr, r: 2, c: 3 }
           ].map((t, i) => {
             const max = 1000; const min = -400; const range = max - min;
             const zeroPos = (max / range) * 100;
