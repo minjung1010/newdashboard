@@ -22,8 +22,8 @@ const getTorqueColor = (val) => {
 function App() {
   const [data, setData] = useState({
     speed: 0, bat_soc: 80, bat_temp: 35, bat_volt: 320, bat_curr: 0,
-    accel_pedal: 0, brake_pedal: 0, accel_x: "0.00", accel_y: "0.00",
-    brake_f: "1.0", brake_r: "0.9", t_fl: 50, t_fr: 50, t_rl: 45, t_rr: 45
+    accel_pedal: 0, brake_pedal: 0, accel_x: 0, accel_y: 0,
+    brake_f: 1.0, brake_r: 0.9, t_fl: 50, t_fr: 50, t_rl: 45, t_rr: 45
   });
 
   const [history, setHistory] = useState(Array(80).fill(80));
@@ -38,21 +38,27 @@ function App() {
         setData(prev => {
           setHistory(prevHist => [...prevHist.slice(1), wsData.bat_soc]);
           return {
-            speed: Math.round(wsData.speed),
-            bat_soc: wsData.bat_soc,
-            bat_temp: wsData.bat_temp.toFixed(1),
-            bat_volt: Math.round(wsData.bat_volt),
-            bat_curr: Math.round(wsData.bat_curr),
-            accel_x: wsData.accel_x.toFixed(2),
-            accel_y: wsData.accel_y.toFixed(2),
-            accel_pedal: Math.round(wsData.accel_pedal),
-            brake_pedal: Math.round(wsData.brake_pedal),
-            brake_f: wsData.brake_press_f.toFixed(1),
-            brake_r: wsData.brake_press_r.toFixed(1),
-            t_fl: Math.round(wsData.torque_fl),
-            t_fr: Math.round(wsData.torque_fr),
-            t_rl: Math.round(wsData.torque_rl),
-            t_rr: Math.round(wsData.torque_rr),
+            speed: Math.round(wsData.speed || 0),
+            bat_soc: wsData.bat_soc || 0,
+            bat_temp: (wsData.bat_temp || 0).toFixed(1),
+            bat_volt: Math.round(wsData.bat_volt || 0),
+            bat_curr: Math.round(wsData.bat_curr || 0),
+            
+            // --- 선배님 dummy_ws.py 데이터 이름과 1:1 매핑 ---
+            accel_x: wsData.accel_x || 0,
+            accel_y: wsData.accel_y || 0,
+            
+            accel_pedal: Math.round(wsData.accel_pedal || 0),
+            brake_pedal: Math.round(wsData.brake_pedal || 0),
+            
+            // 브레이크 압력 필드명 수정 (brake_press_f -> brake_f)
+            brake_f: (wsData.brake_press_f || 0).toFixed(1),
+            brake_r: (wsData.brake_press_r || 0).toFixed(1),
+            
+            t_fl: Math.round(wsData.torque_fl || 0),
+            t_fr: Math.round(wsData.torque_fr || 0),
+            t_rl: Math.round(wsData.torque_rl || 0),
+            t_rr: Math.round(wsData.torque_rr || 0),
           };
         });
       } catch (error) {
@@ -84,17 +90,16 @@ function App() {
   return (
     <div style={{
       backgroundColor: '#000', color: '#fff', 
-      width: '1024px', height: '600px', // 정확한 1024x600 규격으로 고정
+      width: '1024px', height: '600px', 
       display: 'grid', gridTemplateColumns: '2.8fr 4.4fr 2.8fr', gridTemplateRows: 'repeat(5, 1fr)',
       fontFamily: 'Orbitron, sans-serif', padding: '6px', boxSizing: 'border-box'
     }}>
       
-      {/* --- LEFT AREA --- */}
+      {/* --- LEFT --- */}
       <div style={{ gridColumn: '1', gridRow: '1 / 6', display: 'grid', gridTemplateRows: '1.2fr 2.6fr 1.2fr' }}>
         <div style={{ ...boxStyle, fontSize: '46px', color: getTempColor(data.bat_temp), borderBottom: 'none' }}>
           {data.bat_temp}°C
         </div>
-        
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', border: '1px solid #444', borderBottom: 'none' }}>
           <div style={{ display: 'grid', gridTemplateRows: '1fr 1fr', borderRight: '1px solid #444' }}>
             <div style={{ ...boxStyle, border: 'none', borderBottom: '1px solid #444', fontSize: '26px', color: '#C8CCCE' }}>{data.bat_volt}V</div>
@@ -108,46 +113,46 @@ function App() {
             <div style={{ fontSize: '36px', fontWeight: 'bold', marginTop: '12px', color: getSocColor(data.bat_soc) }}>{Math.round(data.bat_soc)}%</div>
           </div>
         </div>
-
         <div style={{ ...boxStyle, padding: '25px 8px 8px 8px' }}>
           <span style={labelStyle}>BATTERY DISCHARGE TREND</span>
           <svg viewBox="0 0 300 100" preserveAspectRatio="none" style={{ width: '100%', height: '85%', overflow: 'visible' }}>
-            <line x1="0" y1="0" x2="300" y2="0" stroke="#222" strokeWidth="1" />
-            <line x1="0" y1="50" x2="300" y2="50" stroke="#222" strokeWidth="1" />
-            <line x1="0" y1="100" x2="300" y2="100" stroke="#222" strokeWidth="1" />
             {renderMultiColorPath()}
             <circle cx="300" cy={100 - data.bat_soc} r="5" fill="#fff" />
           </svg>
         </div>
       </div>
 
-      {/* --- CENTER AREA --- */}
-      <div style={{ gridColumn: '2', gridRow: '1 / 6', display: 'grid', gridTemplateRows: '5fr 1fr 0.7fr 0.7fr' }}>
+      {/* --- CENTER --- */}
+      <div style={{ gridColumn: '2', gridRow: '1 / 6', display: 'grid', gridTemplateRows: '12fr 4.5fr 1fr 1fr' }}>
         <div style={{ ...boxStyle, fontSize: '180px', fontWeight: '900', color: '#27F4D2', borderBottom: 'none' }}>{data.speed}</div>
-        
-        <div style={{ ...boxStyle, borderBottom: 'none', flexDirection: 'row', gap: '40px', justifyContent: 'center' }}>
+        <div style={{ ...boxStyle, borderBottom: 'none', flexDirection: 'column', padding: '10px' }}>
           <span style={labelStyle}>G-FORCE</span>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
-             <span style={{ fontSize: '30px', color: '#888' }}>X</span>
-             <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#27F4D2', minWidth: '120px', textAlign: 'right' }}>
-               {data.accel_x}
-             </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
-             <span style={{ fontSize: '30px', color: '#888' }}>Y</span>
-             <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#27F4D2', minWidth: '120px', textAlign: 'right' }}>
-               {data.accel_y}
-             </div>
-          </div>
+          <svg viewBox="-3 -3 6 6" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+            <circle cx="0" cy="0" r="2.5" fill="none" stroke="#333" strokeWidth="0.08" />
+            {[0.3, 0.8, 1.3, 1.8, 2.3].map((r) => (
+              <circle key={`grid-${r}`} cx="0" cy="0" r={r} fill="none" stroke="#394b55" strokeWidth="0.4" />
+            ))}
+            {/* 왼쪽 끝 2.5 추가 */}
+              <text x="+5.2" y="0.1" fontSize="0.6" fill="#888" textAnchor="end">2.5G</text>
+            <line x1="-2.7" y1="0" x2="2.7" y2="0" stroke="#666" strokeWidth="0.05" />
+            <line x1="0" y1="-2.7" x2="0" y2="2.7" stroke="#666" strokeWidth="0.05" />
+            
+            {/* G-FORCE 실시간 점 연동 */}
+            <circle 
+              cx={Number(data.accel_x)} 
+              cy={Number(data.accel_y)} 
+              r="0.15" 
+              fill="#CCFF00" 
+              style={{ transition: 'all 0.05s linear' }}
+            />
+          </svg>
         </div>
-
         <div style={{ ...boxStyle, padding: '0 25px', borderBottom: 'none' }}>
           <span style={labelStyle}>ACCEL</span>
           <div style={{ width: '100%', height: '25px', background: '#111', border: '1px solid #555' }}>
             <div style={{ width: `${data.accel_pedal}%`, height: '100%', background: '#C8CCCE', transition: 'width 0.05s linear' }} />
           </div>
         </div>
-
         <div style={{ ...boxStyle, padding: '0 25px' }}>
           <span style={labelStyle}>BRAKE</span>
           <div style={{ width: '100%', height: '25px', background: '#111', border: '1px solid #555' }}>
@@ -156,7 +161,7 @@ function App() {
         </div>
       </div>
 
-      {/* --- RIGHT AREA --- */}
+      {/* --- RIGHT --- */}
       <div style={{ gridColumn: '3', gridRow: '1 / 6', display: 'grid', gridTemplateRows: '5fr 5fr' }}>
         <div style={{ ...boxStyle, borderBottom: 'none', padding: '15px' }}>
           <span style={labelStyle}>BRAKE PRESS</span>
@@ -169,54 +174,27 @@ function App() {
               <path d="M50 0 L100 45 L75 45 L75 98 L25 98 L25 45 L0 45 Z" fill={getBrakeColor(data.brake_f)} />
               <rect x="25" y="102" width="50" height="98" fill={getBrakeColor(data.brake_r)} />
             </svg>
-            <div style={{ position: 'absolute', top: '22%', left: '50%', transform: 'translateX(-50%)', color: 'white', fontWeight: 'bold', fontSize: '24px', pointerEvents: 'none' }}>F</div>
-            <div style={{ position: 'absolute', top: '72%', left: '50%', transform: 'translateX(-50%)', color: 'white', fontWeight: 'bold', fontSize: '24px', pointerEvents: 'none' }}>R</div>
           </div>
         </div>
-
         <div style={{ ...boxStyle, display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr', gridTemplateRows: '1fr 1fr', padding: '15px' }}>
           <span style={labelStyle}>TORQUE (Nm)</span>
           {[ 
             { v: data.t_fl, r: 1, c: 1 }, { v: data.t_fr, r: 1, c: 3 }, 
             { v: data.t_rl, r: 2, c: 1 }, { v: data.t_rr, r: 2, c: 3 } 
           ].map((t, i) => {
-            const max = 1000; const min = -400; 
-            const range = max - min;
+            const max = 1000; const min = -400; const range = max - min;
             const zeroPos = (max / range) * 100;
             const barHeight = (Math.abs(t.v) / range) * 100;
             const barTop = t.v >= 0 ? zeroPos - barHeight : zeroPos;
-
             return (
-              <div key={i} style={{ gridRow: t.r, gridColumn: t.c, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '80px', opacity: 0.3 }}>
-                    <div style={{ width: '4px', borderTop: '1px solid #fff' }} />
-                    <div style={{ width: '6px', borderTop: '2px solid #fff' }} /> 
-                    <div style={{ width: '4px', borderTop: '1px solid #fff' }} />
-                  </div>
-                  <div style={{ width: '35px', height: '80px', background: '#111', border: '1px solid #444', position: 'relative' }}>
-                    <div style={{ position: 'absolute', top: `${zeroPos}%`, width: '100%', height: '1px', background: '#555', zIndex: 2 }} />
-                    <div style={{ 
-                      width: '100%', 
-                      height: `${barHeight}%`, 
-                      background: getTorqueColor(t.v), 
-                      position: 'absolute', 
-                      top: `${barTop}%`,
-                      transition: 'all 0.05s linear'
-                    }} />
-                  </div>
+              <div key={i} style={{ gridRow: t.r, gridColumn: t.c, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ width: '35px', height: '80px', background: '#111', border: '1px solid #444', position: 'relative' }}>
+                  <div style={{ width: '100%', height: `${barHeight}%`, background: getTorqueColor(t.v), position: 'absolute', top: `${barTop}%`, transition: 'all 0.05s linear' }} />
                 </div>
-                <div style={{ fontSize: '14px', marginTop: '6px', fontWeight: 'bold', color: getTorqueColor(t.v) }}>{t.v}</div>
+                <div style={{ fontSize: '14px', marginTop: '6px', color: getTorqueColor(t.v) }}>{t.v}</div>
               </div>
             );
           })}
-          <div style={{ gridColumn: '2', gridRow: '1 / 3', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <svg viewBox="0 0 100 160" style={{ height: '85%', opacity: 0.7 }}>
-              <rect x="25" y="20" width="50" height="120" rx="12" fill="none" stroke="#fff" strokeWidth="2" />
-              <circle cx="50" cy="50" r="10" fill="none" stroke="#fff" strokeWidth="2" />
-              <line x1="25" y1="80" x2="75" y2="80" stroke="#333" strokeWidth="1" />
-            </svg>
-          </div>
         </div>
       </div>
     </div>
