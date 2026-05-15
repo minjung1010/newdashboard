@@ -123,7 +123,7 @@ function App() {
       </div>
 
       {/* --- CENTER --- */}
-      <div style={{ gridColumn: '2', gridRow: '1 / 6', display: 'grid', gridTemplateRows: '12fr 4.5fr 1fr 1fr' }}>
+      <div style={{ gridColumn: '2', gridRow: '1 / 6', display: 'grid', gridTemplateRows: '12fr 7fr 1fr 1fr' }}>
         <div style={{ ...boxStyle, fontSize: '180px', fontWeight: '900', color: '#27F4D2', borderBottom: 'none' }}>{data.speed}</div>
         <div style={{ ...boxStyle, borderBottom: 'none', flexDirection: 'column', padding: '10px' }}>
           <span style={labelStyle}>G-FORCE</span>
@@ -141,7 +141,7 @@ function App() {
             <circle
               cx={Number(data.accel_x)}
               cy={Number(data.accel_y)}
-              r="0.15"
+              r="0.25"
               fill="#CCFF00"
               style={{ transition: 'all 0.05s linear' }}
             />
@@ -150,13 +150,13 @@ function App() {
         <div style={{ ...boxStyle, padding: '0 25px', borderBottom: 'none' }}>
           <span style={labelStyle}>ACCEL</span>
           <div style={{ width: '100%', height: '25px', background: '#111', border: '1px solid #555' }}>
-            <div style={{ width: `${data.accel_pedal}%`, height: '100%', background: '#C8CCCE', transition: 'width 0.05s linear' }} />
+            <div style={{ width: `${data.accel_pedal}%`, height: '100%', background: '#00EBFF', transition: 'width 0.05s linear' }} />
           </div>
         </div>
         <div style={{ ...boxStyle, padding: '0 25px' }}>
           <span style={labelStyle}>BRAKE</span>
           <div style={{ width: '100%', height: '25px', background: '#111', border: '1px solid #555' }}>
-            <div style={{ width: `${data.brake_pedal}%`, height: '100%', background: '#C8CCCE', transition: 'width 0.05s linear' }} />
+            <div style={{ width: `${data.brake_pedal}%`, height: '100%', background: '#FF8C00', transition: 'width 0.05s linear' }} />
           </div>
         </div>
       </div>
